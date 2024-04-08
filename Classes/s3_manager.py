@@ -33,12 +33,9 @@ class S3Manager:
             'Bucket': self.bucket_name,
             'Prefix': prefix,
         }
-        page_iterator = paginator.paginate(PaginationConfig={'MaxItems': 1}, **operation_parameters)
+        page_iterator = paginator.paginate(**operation_parameters)
         files = []
         for page in page_iterator:
-            print(page)
-            #files.append(page)
-        #response = self.s3.list_objects_v2(Bucket=self.bucket_name, Prefix=prefix, MaxKeys=1000)
-        #files = [obj['Key'] for obj in response.get('Contents', []) if '/' in obj['Key']]
-        #sorted_files = [obj['Key'] for obj in files.get('Contents', []) if '/' in obj['Key']]
+            # Extract file names from the 'Contents' key in the page dictionary
+            files.extend([content['Key'] for content in page.get('Contents', [])])
         return files
