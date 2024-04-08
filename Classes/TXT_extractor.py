@@ -41,6 +41,13 @@ class TXTExtractor():
         df = pd.DataFrame(participants)
         df['Date'] = date
         df['Location'] = location
+        txt_JSON = df.to_json(orient='records')
+        return txt_JSON
 
-        return df
+
+
+
+
+
+
 

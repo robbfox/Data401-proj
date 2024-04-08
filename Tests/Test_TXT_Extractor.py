@@ -1,8 +1,6 @@
-
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from Classes.TXT_extractor import TXTExtractor
-import pandas as pd
 
 class TestTXTExtractor(unittest.TestCase):
     def test_extract_from_local_file(self):
@@ -18,13 +16,14 @@ class TestTXTExtractor(unittest.TestCase):
         )
 
         # Mock the open function to return the test data
-        with unittest.mock.patch("builtins.open", unittest.mock.mock_open(read_data=test_data)):
+        with patch("builtins.open", unittest.mock.mock_open(read_data=test_data)):
             # Call the extract method with a dummy file path
-            df = extractor.extract("dummy_file.txt")
+            result = extractor.extract("dummy_file.txt")
 
             # Assertions to validate the extraction
-            self.assertIsInstance(df, pd.DataFrame)  # Check if the result is a DataFrame
-            self.assertEqual(len(df), 3)  # Check if the DataFrame has 3 rows
+            self.assertIsInstance(result, str)  # Check if the result is a string
+            self.assertTrue(result.startswith('['))  # Check if the result starts with a '[' indicating JSON array
+            self.assertTrue(result.endswith(']'))  # Check if the result ends with a ']' indicating JSON array
 
     def test_extract_from_s3(self):
         extractor = TXTExtractor()
@@ -48,11 +47,12 @@ class TestTXTExtractor(unittest.TestCase):
         extractor.s3_client = s3_client_mock
 
         # Call the extract method with an empty file path (mocked for S3)
-        df = extractor.extract("")
+        result = extractor.extract("")
 
         # Assertions to validate the extraction
-        self.assertIsInstance(df, pd.DataFrame)  # Check if the result is a DataFrame
-        self.assertEqual(len(df), 3)  # Check if the DataFrame has 3 rows
+        self.assertIsInstance(result, str)  # Check if the result is a string
+        self.assertTrue(result.startswith('['))  # Check if the result starts with a '[' indicating JSON array
+        self.assertTrue(result.endswith(']'))  # Check if the result ends with a ']' indicating JSON array
 
 if __name__ == "__main__":
     unittest.main()
