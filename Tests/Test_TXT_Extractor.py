@@ -18,7 +18,7 @@ class TestTXTExtractor(unittest.TestCase):
         # Mock the open function to return the test data
         with patch("builtins.open", unittest.mock.mock_open(read_data=test_data)):
             # Call the extract method with a dummy file path
-            result = extractor.extract("dummy_file.txt")
+            result = extractor.extract("Talent/Sparta Day 11 December 2019.txt")
 
             # Assertions to validate the extraction
             self.assertIsInstance(result, str)  # Check if the result is a string
@@ -47,7 +47,7 @@ class TestTXTExtractor(unittest.TestCase):
         extractor.s3_client = s3_client_mock
 
         # Call the extract method with an empty file path (mocked for S3)
-        result = extractor.extract("")
+        result = extractor.extract("/Talent/Sparta Day 11 December 2019.txt")
 
         # Assertions to validate the extraction
         self.assertIsInstance(result, str)  # Check if the result is a string
