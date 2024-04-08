@@ -1,6 +1,7 @@
 import boto3
 from botocore.exceptions import NoCredentialsError
 
+
 class S3Manager:
     def __init__(self, bucket_name):
         self.bucket_name = bucket_name
@@ -27,6 +28,17 @@ class S3Manager:
 
     def list_files(self, prefix):
         """List all files in a folder"""
-        response = self.s3.list_objects_v2(Bucket=self.bucket_name, Prefix=prefix)
-        files = [obj['Key'] for obj in response.get('Contents', []) if '/' in obj['Key']]
+        paginator = self.s3.get_paginator('list_objects_v2')
+        operation_parameters = {
+            'Bucket': self.bucket_name,
+            'Prefix': prefix,
+        }
+        page_iterator = paginator.paginate(PaginationConfig={'MaxItems': 1}, **operation_parameters)
+        files = []
+        for page in page_iterator:
+            print(page)
+            #files.append(page)
+        #response = self.s3.list_objects_v2(Bucket=self.bucket_name, Prefix=prefix, MaxKeys=1000)
+        #files = [obj['Key'] for obj in response.get('Contents', []) if '/' in obj['Key']]
+        #sorted_files = [obj['Key'] for obj in files.get('Contents', []) if '/' in obj['Key']]
         return files
