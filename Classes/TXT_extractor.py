@@ -1,4 +1,5 @@
 import pandas as pd
+from Datetime import Datetime
 
 class TXTExtractor:
     def extract(self, text_file):
@@ -27,3 +28,4 @@ class TXTExtractor:
         df['Location'] = location
         txt_JSON = df.to_json(orient='records')
         return txt_JSON
+
