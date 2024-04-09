@@ -23,25 +23,18 @@ class MongoUploader():
         print("successfully uploaded in Talent")
 
     def dataframe_uploader(self, data_input):
-        #json_input_academy = data_input.to_json(orient='records')
-        #dict_input_academy = json.loads(json_input_academy)
-        dict_input_academy = data_input.to_json(orient='records')
-        #dict_input_academy = data_input.to_dict(orient='records')
-        print(type(dict_input_academy))
-        if isinstance(dict_input_academy, dict):
-            db.Academy.insert_one(dict_input_academy)
+        list_input_academy = data_input.to_dict(orient='records')
+        print(type(list_input_academy))
+        if isinstance(list_input_academy,list):
+            for record in list_input_academy:
+                db.Academy.insert_one({"data": record})
             print("successfully uploaded in Academy")
         else:
             print("Error: dict_input_academy is not a valid dictionary")
-        #db.Academy.insert_one(dict_input_academy)
-        #print("successfully uploaded in Academy")
 
 
-mongo_input = MongoUploader()
-data_input = pd.read_csv('Data_30_2019-04-08.csv')
-print(data_input)
-mongo_input.format_identifier(data_input)
-#print(type(data_input))
+
+
 
 
 
