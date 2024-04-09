@@ -28,4 +28,3 @@ class TXTExtractor:
         df['Location'] = location
         txt_JSON = df.to_json(orient='records')
         return txt_JSON
-
