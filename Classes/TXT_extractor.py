@@ -1,6 +1,6 @@
 import boto3
 import pandas as pd
-
+import Classes.s3_manager
 
 class TXTExtractor():
     def __init__(self, s3_client=None):
@@ -8,6 +8,7 @@ class TXTExtractor():
         self.s3_client = boto3.client('s3', region_name='eu-central-1')
         self.bucket_name = 'data-eng-401-final-project'
         self.folder_name = 'Talent/'
+
 
     def list_txt_files(self):
         """
