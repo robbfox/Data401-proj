@@ -1,9 +1,13 @@
 ##from data_extractor import DataExtractor
+import io
+
 import pandas as pd
 import numpy as np
 
 
 class CSVExtractor:
+
+
     @staticmethod
     def extract(file_path):
         # Function to standardize phone numbers
@@ -15,13 +19,19 @@ class CSVExtractor:
             # Remove non-digit characters
             digits_only = ''.join(filter(str.isdigit, phone))
 
-            # Format phone number uniformly
-            formatted_phone = '+44 {} {} {}'.format(digits_only[2:5], digits_only[5:8], digits_only[8:])
+            # Ensure there are enough digits for formatting
+            if len(digits_only) >= 10:
+                # Format phone number uniformly, assuming UK country code (+44) and standard length
+                formatted_phone = '+44 {} {} {}'.format(digits_only[-10:-7], digits_only[-7:-4], digits_only[-4:])
+                return formatted_phone
+            else:
+                # Return the original phone number if it doesn't meet criteria
+                return phone
 
-            return formatted_phone
+        # Convert bytes object to file-like object and read CSV file
+        df = pd.read_csv(io.BytesIO(file_path))
 
-        # Read CSV file
-        df = pd.read_csv(file_path)
+        # Check the condition based on the number of columns
         if len(df.columns) == 50:
             # Apply fillna(0) in-place
             df.fillna(0, inplace=True)
@@ -32,7 +42,7 @@ class CSVExtractor:
             # Change all empty cells in each category (except 'month') to NaN
             df.replace('', np.nan, inplace=True)
 
-            # Apply the standardize_phone function to each phone number
+            # Apply the standardize_phone function to each phone number correctly
             df['phone_number'] = df['phone_number'].apply(standardize_phone)
 
         return df
