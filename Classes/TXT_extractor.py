@@ -1,8 +1,8 @@
 import pandas as pd
-from Datetime import Datetime
+from datetime import datetime
 
 class TXTExtractor:
-    def extract(self, text_file):
+    def extract(self, text_file='x.txt'):
         with open(text_file, 'r') as file:
             text_data = file.read()
         lines = [line for line in text_data.strip().split("\n") if line.strip()]
@@ -10,7 +10,10 @@ class TXTExtractor:
             raise ValueError("Text data does not contain sufficient information")
 
         # Extract the date and location
-        date, location = lines[0], lines[1]
+        date_string, location = lines[0], lines[1]
+
+        # Parse the date string into a datetime object
+        date = datetime.strptime(date_string, '%A %d %B %Y').strftime('%d/%m/%Y')
 
         participants = []
         # Parse participant lines
@@ -27,4 +30,4 @@ class TXTExtractor:
         df["Date"] = date
         df['Location'] = location
         txt_JSON = df.to_json(orient='records')
-        return txt_JSON
+        print(txt_JSON)
