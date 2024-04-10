@@ -15,18 +15,15 @@ class TestTXTExtractor(unittest.TestCase):
             "CELLO RICIOPPO -  Psychometrics: 55/100, Presentation: 20/32\n"
             "BERRI COCKLIN -  Psychometrics: 63/100, Presentation: 17/32\n"
         )
+        ## string to bytes
+
+        test_data=test_data.encode('utf-8')  ## OBJECT OF BYTES
+        result = extractor.extract(test_data)
 
 
-
-        # Mock the open function to return the test data
-        with patch("builtins.open", unittest.mock.mock_open(read_data=test_data)):
-            # Call the extract method with a dummy file path
-            result = extractor.extract("Talent/Sparta Day 11 December 2019.txt")
-
-            # Assertions to validate the extraction
-            self.assertIsInstance(result, str)  # Check if the result is a string
-            self.assertTrue(result.startswith('['))  # Check if the result starts with a '[' indicating JSON array
-            self.assertTrue(result.endswith(']'))  # Check if the result ends with a ']' indicating JSON array
+        self.assertIsInstance(result, str)  # Check if the result is a string
+        self.assertTrue(result.startswith('['))  # Check if the result starts with a '[' indicating JSON array
+        self.assertTrue(result.endswith(']'))  # Check if the result ends with a ']' indicating JSON array
 
     def test_extract_from_s3(self):
         extractor = TXTExtractor()
