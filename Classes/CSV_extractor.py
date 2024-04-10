@@ -56,6 +56,8 @@ class CSVExtractor:
             # Standardize phone numbers
             df['phone_number'] = df['phone_number'].apply(standardize_phone)
 
+            df.drop(columns=['id', 'month'], inplace=True)
+
             return df
 
         else:
