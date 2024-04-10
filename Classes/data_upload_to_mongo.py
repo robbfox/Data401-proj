@@ -44,19 +44,24 @@ class MongoUploader():
             print("Error: input data is not a valid dictionary or a list of dictionaries")
 
     def talent_dataframe_uploader(self, data_input):
-        # Assuming data_input is a single dict or a DataFrame with a single row
+        # Check if data_input is a DataFrame with one or more rows
         if isinstance(data_input, pd.DataFrame):
-            # Convert DataFrame to a single dict
-            dict_input_talent = data_input.to_dict(orient='records')[0]
+            # Convert DataFrame to a list of dictionaries
+            list_input_talent = data_input.to_dict(orient='records')
         elif isinstance(data_input, dict):
-            # Use data_input directly if it's already a dict
-            dict_input_talent = data_input
+            # If it's a single dictionary, wrap it in a list
+            list_input_talent = [data_input]
         else:
             raise ValueError("data_input must be a DataFrame or a dict")
 
-        # Insert a single document into the Talent collection
-        db.Talent.insert_one(dict_input_talent)
-        print("Successfully uploaded data to Talent collection.")
+        # Check if the list is not empty
+        if list_input_talent:
+            # Insert each dictionary from the list as a separate document into the Talent collection
+            db.Talent.insert_many(list_input_talent)
+            print(f"Successfully uploaded {len(list_input_talent)} records to Talent collection.")
+        else:
+            print("No records to upload to Talent collection.")
+
     def academy_dataframe_uploader(self, data_input):
         # Assuming data_input is a DataFrame with a single row
         if isinstance(data_input, pd.DataFrame):

@@ -15,7 +15,9 @@ class TestCSVExtractor(unittest.TestCase):
 
         # Use the CSVExtractor to read the sample data
         extractor = CSVExtractor()
-        df = extractor.extract(csv_data)
+        csv_data = csv_data.getvalue().encode('utf-8')
+
+        df = extractor.extract(csv_data,"feb2019Applications.csv")
 
         # Perform some assertions
         self.assertEqual(len(df), 3)  # Expecting 3 rows of data
