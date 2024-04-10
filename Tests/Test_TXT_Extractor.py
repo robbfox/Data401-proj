@@ -2,6 +2,20 @@ import unittest
 from unittest.mock import MagicMock, patch
 from Classes.TXT_extractor import TXTExtractor
 import io
+
+import json
+
+
+
+import unittest
+from unittest.mock import MagicMock, patch
+from Classes.TXT_extractor import TXTExtractor
+import io
+
+import json
+
+
+
 class TestTXTExtractor(unittest.TestCase):
     def test_extract_from_local_file(self):
         extractor = TXTExtractor()
@@ -25,12 +39,11 @@ class TestTXTExtractor(unittest.TestCase):
         self.assertTrue(result.startswith('['))  # Check if the result starts with a '[' indicating JSON array
         self.assertTrue(result.endswith(']'))  # Check if the result ends with a ']' indicating JSON array
 
-    def test_extract_from_s3(self):
+    def test_json_output(self):
         extractor = TXTExtractor()
+          # Check if the json_output is a list
 
-        s3_client_mock = MagicMock()
-
-        # Define test data for S3 response
+    # Define test data for a local file
         test_data = (
             "Wednesday 18 September 2019\n"
             "London Academy\n"
@@ -39,21 +52,40 @@ class TestTXTExtractor(unittest.TestCase):
             "CELLO RICIOPPO -  Psychometrics: 55/100, Presentation: 20/32\n"
             "BERRI COCKLIN -  Psychometrics: 63/100, Presentation: 17/32\n"
         )
+        test_data=test_data.encode('utf-8')  ## OBJECT OF BYTES
+        result = extractor.extract(test_data)
+        result_json = json.loads(result)
+        self.assertIsInstance(result_json, list)
 
-        s3_client_mock.get_object.return_value = {
-            'Body': MagicMock(return_value=test_data.encode())
-        }
+    def test_returns_date_in_correct_format(self):
+        extractor = TXTExtractor()
+        # Define test data for a local file
+        test_data = (
+            "Wednesday 8 September 2019\n"
+            "London Academy\n"
+            "\n"
+            "JAQUENETTA CATONNE -  Psychometrics: 60/100, Presentation: 28/32\n"
+            "CELLO RICIOPPO -  Psychometrics: 55/100, Presentation: 20/32\n"
+            "BERRI COCKLIN -  Psychometrics: 63/100, Presentation: 17/32\n"
+        )
+        test_data=test_data.encode('utf-8')  ## OBJECT OF BYTES
+        result = extractor.extract(test_data)
+        result_json = json.loads(result)
+        print(result_json, '>>>')
 
-        # Set the S3 client for the extractor
-        extractor.s3_client = s3_client_mock
+        self.assertEqual(result_json[0]["date"], "08/09/2019")
+        self.assertEqual(result_json[1]["date"], "08/09/2019")
+        self.assertEqual(result_json[2]["date"], "08/09/2019")
 
-        # Call the extract method with an empty file path (mocked for S3)
-        result = extractor.extract("/Talent/Sparta Day 11 December 2019.txt")
 
-        # Assertions to validate the extraction
-        self.assertIsInstance(result, str)  # Check if the result is a string
-        self.assertTrue(result.startswith('['))  # Check if the result starts with a '[' indicating JSON array
-        self.assertTrue(result.endswith(']'))  # Check if the result ends with a ']' indicating JSON array
+    # Convert the result to a JSON object
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     unittest.main()
