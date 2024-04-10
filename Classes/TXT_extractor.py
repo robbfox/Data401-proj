@@ -17,7 +17,7 @@ class TXTExtractor:
 
 
         # Parse the date string into a datetime object
-        date = datetime.strptime(date_string, '%A %d %B %Y').strftime('%d/%m/%Y')
+        date = datetime.strptime(date_string, '%A %d %B %Y').strftime('%d/%m/%Y').replace("\\", "")
 
         participants = []
         # Parse participant lines, removing carriage returns and other unwanted characters
@@ -39,5 +39,7 @@ class TXTExtractor:
         df['Location'] = location
 
         # Convert DataFrame to JSON
-        txt_JSON = df.to_json(orient='records')
+
+        txt_JSON = df.to_json(orient='records',date_format='iso')
+        tct_JSON = txt_JSON.replace('\/', '/')
         return txt_JSON

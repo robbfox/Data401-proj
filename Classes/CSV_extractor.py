@@ -4,6 +4,10 @@ import io
 import pandas as pd
 import numpy as np
 
+## TO GET ALL COLUMNS
+pd.set_option('display.max_rows', 500)  # or use None to display all rows
+pd.set_option('display.max_columns', None)  # Display all columns
+
 
 class CSVExtractor:
 

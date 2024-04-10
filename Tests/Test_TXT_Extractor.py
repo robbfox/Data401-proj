@@ -1,19 +1,22 @@
 import unittest
 from unittest.mock import MagicMock, patch
 from Classes.TXT_extractor import TXTExtractor
-
+import io
 class TestTXTExtractor(unittest.TestCase):
     def test_extract_from_local_file(self):
         extractor = TXTExtractor()
 
         # Define test data for a local file
         test_data = (
-            "2024-04-08\n"
-            "Location: XYZ\n"
+            "Wednesday 18 September 2019\n"
+            "London Academy\n"
+            "\n"
             "JAQUENETTA CATONNE -  Psychometrics: 60/100, Presentation: 28/32\n"
             "CELLO RICIOPPO -  Psychometrics: 55/100, Presentation: 20/32\n"
             "BERRI COCKLIN -  Psychometrics: 63/100, Presentation: 17/32\n"
         )
+
+
 
         # Mock the open function to return the test data
         with patch("builtins.open", unittest.mock.mock_open(read_data=test_data)):
@@ -32,8 +35,9 @@ class TestTXTExtractor(unittest.TestCase):
 
         # Define test data for S3 response
         test_data = (
-            "2024-04-08\n"
-            "Location: XYZ\n"
+            "Wednesday 18 September 2019\n"
+            "London Academy\n"
+            "\n"
             "JAQUENETTA CATONNE -  Psychometrics: 60/100, Presentation: 28/32\n"
             "CELLO RICIOPPO -  Psychometrics: 55/100, Presentation: 20/32\n"
             "BERRI COCKLIN -  Psychometrics: 63/100, Presentation: 17/32\n"
