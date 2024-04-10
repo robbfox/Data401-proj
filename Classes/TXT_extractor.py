@@ -41,5 +41,5 @@ class TXTExtractor:
         # Convert DataFrame to JSON
 
         txt_JSON = df.to_json(orient='records',date_format='iso')
-        tct_JSON = txt_JSON.replace('\/', '/')
+        txt_JSON = txt_JSON.replace('\/', '/')
         return txt_JSON
