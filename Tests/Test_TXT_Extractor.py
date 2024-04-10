@@ -6,16 +6,6 @@ import io
 import json
 
 
-
-import unittest
-from unittest.mock import MagicMock, patch
-from Classes.TXT_extractor import TXTExtractor
-import io
-
-import json
-
-
-
 class TestTXTExtractor(unittest.TestCase):
     def test_extract_from_local_file(self):
         extractor = TXTExtractor()

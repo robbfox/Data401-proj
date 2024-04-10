@@ -3,6 +3,7 @@ import json
 import pandas as pd
 
 class MongoUploader():
+
     def format_identifier(self, data_input, collection):
         file_type = type(data_input)
 
@@ -67,6 +68,7 @@ class MongoUploader():
         # Insert a single document into the Academy collection
         db.Academy.insert_one(dict_input_academy)
         print("Successfully uploaded in Academy")
+
 
 
 
