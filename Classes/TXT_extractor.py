@@ -1,10 +1,9 @@
-import io
-
 import pandas as pd
 from datetime import datetime
+import json
 
 class TXTExtractor:
-    def extract(self, text_file='x.txt'):
+    def extract(self, text_file):
         text_data = text_file.decode('utf-8')
 
 
@@ -28,18 +27,21 @@ class TXTExtractor:
             psychometrics_score = psychometrics.split(": ")[1]
             presentation_score = presentation.split(": ")[1].strip()  # Ensure to strip again if needed
             participants.append({
-                "name": name,
+                "name": name.lower().title(),
                 "Psychometrics": psychometrics_score,
                 "Presentation": presentation_score
             })
 
         # Create a DataFrame
         df = pd.DataFrame(participants)
-        df["Date"] = date
+        df["date"] = date
         df['Location'] = location
 
         # Convert DataFrame to JSON
 
         txt_JSON = df.to_json(orient='records',date_format='iso')
-        txt_JSON = txt_JSON.replace('\/', '/')
-        return txt_JSON
+        json_data = json.loads(txt_JSON)
+        json_data.append({"date": date, "Location": location})
+        final_json = json.dumps(json_data)
+        final_json = final_json.replace('\/', '/')
+        return final_json
