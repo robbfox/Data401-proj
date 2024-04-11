@@ -1,8 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, patch
 from Classes.TXT_extractor import TXTExtractor
-import io
-
 import json
 
 
@@ -67,14 +64,39 @@ class TestTXTExtractor(unittest.TestCase):
         self.assertEqual(result_json[1]["date"], "08/09/2019")
         self.assertEqual(result_json[2]["date"], "08/09/2019")
 
+    def test_returns_correct_psychometrics_score_for_cello_ricioppo(self):
+        extractor = TXTExtractor()
+        # Define test data for a local file
+        test_data = (
+            "Wednesday 8 September 2019\n"
+            "London Academy\n"
+            "\n"
+            "JAQUENETTA CATONNE -  Psychometrics: 60/100, Presentation: 28/32\n"
+            "CELLO RICIOPPO -  Psychometrics: 55/100, Presentation: 20/32\n"
+            "BERRI COCKLIN -  Psychometrics: 63/100, Presentation: 17/32\n"
+        )
+        test_data = test_data.encode('utf-8')  ## OBJECT OF BYTES
+        result = extractor.extract(test_data)
+        result_json = json.loads(result)
 
-    # Convert the result to a JSON object
+        self.assertEqual(result_json[1]["Psychometrics"], "55/100")
 
+    def test_returns_correct_presentation_score_for_cello_ricioppo(self):
+        extractor = TXTExtractor()
+        # Define test data for a local file
+        test_data = (
+            "Wednesday 8 September 2019\n"
+            "London Academy\n"
+            "\n"
+            "JAQUENETTA CATONNE -  Psychometrics: 60/100, Presentation: 28/32\n"
+            "CELLO RICIOPPO -  Psychometrics: 55/100, Presentation: 20/32\n"
+            "BERRI COCKLIN -  Psychometrics: 63/100, Presentation: 17/32\n"
+        )
+        test_data = test_data.encode('utf-8')  ## OBJECT OF BYTES
+        result = extractor.extract(test_data)
+        result_json = json.loads(result)
 
-
-
-
-
+        self.assertEqual(result_json[1]["Presentation"], "20/32")
 
 
 if __name__ == "__main__":
