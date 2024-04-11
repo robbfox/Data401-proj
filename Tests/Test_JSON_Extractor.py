@@ -55,11 +55,11 @@ class TestJSONExtractor(unittest.TestCase):
 
     def test_extract_empty_json(self):
         # Test with empty JSON content
-        file = '{}'
         json_extractor = JSONExtractor()
-        expected_json = {}
-        extracted_json = json_extractor.extract(file)
-        self.assertEqual(extracted_json, expected_json)
+        file = json.dumps({})
+        with self.assertRaises(ValueError) as cm:
+            json_extractor.extract(file)
+        self.assertEqual("The JSON file is empty.", str(cm.exception))
 
     def test_extract_list(self):
         file = {"name": "Orly Lorens",
