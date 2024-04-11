@@ -24,15 +24,15 @@ for col in S3col:
         if filename.endswith(".csv"):
             file = CSVExtractor().extract(file,filename)
             print(filename)
-            loader.format_identifier(file, col)
+            loader.format_identifier(file, col,filename)
         elif filename.endswith(".txt"):
             file = TXTExtractor().extract(file)
             print(filename)
-            loader.format_identifier(file, col)
+            loader.format_identifier(file, col,filename)
         elif filename.endswith(".json"):
             file = JSONExtractor().extract(file)
             print(filename)
-            loader.format_identifier(file, col)
+            loader.format_identifier(file, col,filename)
 
 
 

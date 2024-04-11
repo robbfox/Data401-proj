@@ -4,76 +4,57 @@ import pandas as pd
 
 class MongoUploader():
 
-    def format_identifier(self, data_input, collection):
+    def format_identifier(self, data_input, collection, file_origin):
+        # Determine the type of data input
         file_type = type(data_input)
 
-
         if collection == "Academy/":
-            self.academy_dataframe_uploader(data_input)
-
+            # For Academy data
+            self.academy_dataframe_uploader(data_input, file_origin)
         elif collection == "Talent/":
+            # For Talent data
             if file_type == str:
-                print("In JSON")
-                self.json_uploader(data_input)
+                # If data_input is a string (JSON)
+                self.json_uploader(data_input, file_origin)
             else:
-                print("In dataframe")
-                self.talent_dataframe_uploader(data_input)
+                # If data_input is a DataFrame
+                self.talent_dataframe_uploader(data_input, file_origin)
 
-    def json_uploader(self, data_input):
-        print("In JSON uploader")
-        if isinstance(data_input, str):
-            # If the input data is a string, attempt to parse it as JSON
-            try:
-                parsed_data = json.loads(data_input)
-            except json.JSONDecodeError as e:
-                print(f"Error parsing input data as JSON: {e}")
-                return
-        else:
-            parsed_data = data_input
+    def json_uploader(self, data_input, file_origin):
+        # Parse the JSON data
+        parsed_data = json.loads(data_input) if isinstance(data_input, str) else data_input
 
-        # Check if parsed_data is a dictionary or a list of dictionaries
+        # Insert 'File origin' into each document
         if isinstance(parsed_data, dict):
-            # If it's a single dictionary, insert it directly
+            parsed_data["File origin"] = file_origin
             db.Talent.insert_one(parsed_data)
-            print("Successfully uploaded in Talent")
-        elif isinstance(parsed_data, list) and all(isinstance(item, dict) for item in parsed_data):
-            # If it's a list of dictionaries, insert each dictionary separately
+        elif isinstance(parsed_data, list):
+            for document in parsed_data:
+                document["File origin"] = file_origin
             db.Talent.insert_many(parsed_data)
-            print("Successfully uploaded multiple documents in Talent")
-        else:
-            print("Error: input data is not a valid dictionary or a list of dictionaries")
 
-    def talent_dataframe_uploader(self, data_input):
-        # Check if data_input is a DataFrame with one or more rows
-        if isinstance(data_input, pd.DataFrame):
-            # Convert DataFrame to a list of dictionaries
-            list_input_talent = data_input.to_dict(orient='records')
-        elif isinstance(data_input, dict):
-            # If it's a single dictionary, wrap it in a list
-            list_input_talent = [data_input]
-        else:
-            raise ValueError("data_input must be a DataFrame or a dict")
+        print(f"Successfully uploaded JSON data from {file_origin}")
 
-        # Check if the list is not empty
-        if list_input_talent:
-            # Insert each dictionary from the list as a separate document into the Talent collection
-            db.Talent.insert_many(list_input_talent)
-            print(f"Successfully uploaded {len(list_input_talent)} records to Talent collection.")
-        else:
-            print("No records to upload to Talent collection.")
+    def talent_dataframe_uploader(self, data_input, file_origin):
+        # Convert the DataFrame to a list of dictionaries and add 'File origin'
+        documents = data_input.to_dict(orient='records') if isinstance(data_input, pd.DataFrame) else [data_input]
 
-    def academy_dataframe_uploader(self, data_input):
-        # Assuming data_input is a DataFrame with a single row
-        if isinstance(data_input, pd.DataFrame):
-            # Convert DataFrame to a single dict
-            dict_input_academy = data_input.to_dict(orient='records')[0]
-        else:
-            raise ValueError("data_input must be a DataFrame with a single row")
+        for document in documents:
+            document["File origin"] = file_origin
 
-        # Insert a single document into the Academy collection
-        db.Academy.insert_one(dict_input_academy)
-        print("Successfully uploaded in Academy")
+        # Insert documents into the collection
+        db.Talent.insert_many(documents)
+        print(f"Successfully uploaded DataFrame data from {file_origin} to Talent collection.")
 
+    def academy_dataframe_uploader(self, data_input, file_origin):
+        # Handle academy data similarly to talent data
+        documents = data_input.to_dict(orient='records') if isinstance(data_input, pd.DataFrame) else [data_input]
+
+        for document in documents:
+            document["File origin"] = file_origin
+
+        db.Academy.insert_many(documents)
+        print(f"Successfully uploaded DataFrame data from {file_origin} to Academy collection.")
 
 
 
