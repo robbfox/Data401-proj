@@ -30,8 +30,8 @@ class TestCSVExtractor(unittest.TestCase):
                 return True
             except ValueError:
                 return False
-        self.assertEqual(len(df), 6)  # Expecting 3 rows of data
-        self.assertTrue('name' in df.columns)  # 'id' column should exist
+        self.assertEqual(len(df), 6)
+        self.assertTrue('name' in df.columns)
         self.assertTrue(df['phone_number'].str.startswith('+44').all())  # All phone numbers should start with +44
         self.assertTrue(all(df['Date'].apply(is_valid_date)), "One or more dates are in the incorrect format.")
 
