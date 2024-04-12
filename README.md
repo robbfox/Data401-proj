@@ -85,6 +85,30 @@ This markdown describes how we identified overlapping data in each document from
 
 **Talent to Academy links: applicant name**
 
+## Code for linking together separate documents
+File: mongo_atlas_connect
+The file above identifies the name of the candidate and allocates a unique ID. It pulls the sparta day results, interview scores and personal info from the Talent collection and the academy scores from the Academy collection. This creates a unique one person view for all of the Sparta Global Information. 
+
+
+## Uploading new data into the existing database
+The runner file Runner.py takes in the data currently in the Talent and Academy collections as well as our new documents. They are put into a Set to identify what is new data anything that is not in the database already will be cleaned and added. 
+Example code here: 
+documents = list(collection.find())
+
+### Loop through the documents and upload each to S3
+for doc in documents:
+# Convert the document to a JSON string
+doc_json = dumps(doc)
+
+### Use the '_id' field as the name for the JSON file
+file_name = file_name = f"Candidates/{doc['name'].replace(' ', '_')}_{doc['_id']}.json"
+
+### Upload to S3
+s3.s3.put_object(Body=doc_json, Bucket=bucket_name, Key=file_name)
+print(f"Uploaded {file_name} to S3 bucket {bucket_name}")
+
+
+
 
 License
 This project is licensed under the MIT License
