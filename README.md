@@ -43,7 +43,8 @@ This database would be receiving data from the Talent and Academy categories. Ta
 ## Uploading the data into MongoDB
 File: data_upload_to_mongo
 Running the above file takes in the input (cleaned data) and inserts them into either the Talent or Academy Collection in the MongoDB database buy identifying the ending of the file e.g. .JSON.
- 
+![image](https://github.com/robbfox/Data401-proj/assets/65783110/d569666d-784f-4e9e-b7b8-4968bf5b72dc)
+
 ## Linking together separate documents
 This markdown describes how we identified overlapping data in each document from the Talent and Academy bucket to create reference points to build our one-person view (in the Candidate collection). The Applicant name and test date are the main linking attributes we have used.
 
