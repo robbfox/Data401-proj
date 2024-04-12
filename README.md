@@ -97,7 +97,7 @@ documents = list(collection.find())
 
 ### Loop through the documents and upload each to S3
 for doc in documents:
-# Convert the document to a JSON string
+#### Convert the document to a JSON string
 doc_json = dumps(doc)
 
 ### Use the '_id' field as the name for the JSON file
