@@ -47,7 +47,7 @@ Running the above file takes in the input (cleaned data) and inserts them into e
 ## Linking together separate documents
 This markdown describes how we identified overlapping data in each document from the Talent and Academy bucket to create reference points to build our one-person view (in the Candidate collection). The Applicant name and test date are the main linking attributes we have used.
 
-## Talent Bucket
+### Talent Bucket
 - **json - individual applicant details**
   - Key information in file:
     - Applicant name
@@ -73,7 +73,7 @@ This markdown describes how we identified overlapping data in each document from
   - File name information:
     - Date
 
-## Academy Bucket
+### Academy Bucket
 - **csv - course and start data scores for people in that cohort**
   - Key information in file:
     - Applicant name
