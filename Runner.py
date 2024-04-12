@@ -65,25 +65,25 @@ for doc in documents:
 # db['academy'].drop()
 # db['talent'].drop()
 
-### once dropped. no need for lists of any sort. just create the objects
+## once dropped. no need for lists of any sort. just create the objects
 
 ## Some sort of runner code for the creation of objects.
 print("Objects created successfully")
 
 print("uploading objects to s3")
 ## no need to worry about duplicates. just upload all files to s3 since files for same name will overwrite each other
-# Get all documents from the collection
+## Get all documents from the collection
 documents = list(collection.find())
 
-# Loop through the documents and upload each to S3
+## Loop through the documents and upload each to S3
 for doc in documents:
     # Convert the document to a JSON string
     doc_json = dumps(doc)
 
-    # Use the '_id' field as the name for the JSON file
+    ## Use the '_id' field as the name for the JSON file
     file_name = file_name = f"Candidates/{doc['name'].replace(' ', '_')}_{doc['_id']}.json"
 
-    # Upload to S3
+    ## Upload to S3
     s3.s3.put_object(Body=doc_json, Bucket=bucket_name, Key=file_name)
     print(f"Uploaded {file_name} to S3 bucket {bucket_name}")
 
