@@ -110,8 +110,3 @@ file_name = file_name = f"Candidates/{doc['name'].replace(' ', '_')}_{doc['_id']
 s3.s3.put_object(Body=doc_json, Bucket=bucket_name, Key=file_name)
 print(f"Uploaded {file_name} to S3 bucket {bucket_name}")
 
-
-
-
-License
-This project is licensed under the MIT License
