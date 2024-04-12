@@ -1,3 +1,4 @@
+from bson.json_util import dumps
 from Classes.TXT_extractor import TXTExtractor
 from Classes.CSV_extractor import CSVExtractor
 from Classes.s3_manager import S3Manager
@@ -6,18 +7,18 @@ from Classes.data_upload_to_mongo import MongoUploader
 from Classes.ProcessedFiles import ProcessedFilesManager
 from Classes.CandidateAnalytics import CandidateAnalytics
 from mongo_atlas_connect import *
+from Classes.mongo_model import *
 
 
-
-
+inserter = CreateCandidate()
 bucket_name = "data-eng-401-final-project"
 s3 = S3Manager(bucket_name)
 S3col= ["Talent/", "Academy/"]
 processed_files_path = 'processed_files.txt'
-processed_objects = 'processed_objects.txt'
+#processed_objects = 'processed_objects.txt'   ## may not need this
 loader = MongoUploader()
 filehandler = ProcessedFilesManager(processed_files_path)
-objectHandler = ProcessedFilesManager(processed_objects)
+#objectHandler = ProcessedFilesManager(processed_objects)
 
 processed_files = filehandler.read_processed_files_list()
 # files_to_process = s3.list_files("Talent/")
@@ -33,45 +34,57 @@ for col in S3col:
         file = s3.read_file_to_memory(filename)
         if filename.endswith(".csv"):
             file = CSVExtractor().extract(file,filename)
-            print(filename)
+            #print(filename)
             loader.format_identifier(file, col,filename)
         elif filename.endswith(".txt"):
             file = TXTExtractor().extract(file)
-            print(filename)
+            #print(filename)
             loader.format_identifier(file, col,filename)
         elif filename.endswith(".json"):
             file = JSONExtractor().extract(file)
-            print(filename)
+            #print(filename)
             loader.format_identifier(file, col,filename)
         filehandler.write_processed_file(filename)
 
 print("All files processed")
-print("uploading to mongo complete")
-'''
-## get the collection to see whats already in side and not repeate candidate uploads
-## List of objects that have been processed already
+print("uploading raw files to mongo complete")
+print("Process 30% complete")
+
 collection = db['Candidates']
-documents = list(collection.find())
-list_of_objects_processed =[]
-for doc in documents:
-
-    file_name = f"Candidates/{doc['name'].replace(' ', '_')}.json"
-    list_of_objects_processed.append(file_name)
-## do we want to drop the Accademy col and Talent col since we have the Candidates col? meaning we dont have to worry about duplicate objects?
-## this also means the we dont re create the same object and no need to double check. just after all obj created drop. only new files are added in the database then
-## we redrop the 2 collections after we fill candidates up more.
+# documents = list(collection.find())
+# list_of_objects_processed =[]
+# for doc in documents:
+#
+#     file_name = f"Candidates/{doc['name'].replace(' ', '_')}.json"
+#     list_of_objects_processed.append(file_name)
 
 
-# db['academy'].drop()
-# db['talent'].drop()
+regex_pattern = re.compile(r".json$")
+json_docs = db.Talent.find({"File origin": {"$regex": regex_pattern}},
+                           {"name": 1, "date": 1, "_id": 0})
 
-### once dropped. no need for lists of any sort. just create the objects
+for json_doc in json_docs:
+    input_name = json_doc['name']
+    input_date = json_doc['date']
+    inserter.get_id_talent(input_name, input_date)
+    print(f"Inserted candidate for {input_name}")
 
-## Some sort of runner code for the creation of objects.
-print("Objects created successfully")
 
+
+
+
+
+
+db['Academy'].drop()
+db['Talent'].drop()
+
+
+
+
+print("Objects created successfully and inserted into Candidates collection")
+print("Process 70% complete")
 print("uploading objects to s3")
-## no need to worry about duplicates. just upload all files to s3 since files for same name will overwrite each other
+
 # Get all documents from the collection
 documents = list(collection.find())
 
@@ -88,7 +101,11 @@ for doc in documents:
     print(f"Uploaded {file_name} to S3 bucket {bucket_name}")
 
 
-'''
+
+print("All objects uploaded to s3")
+print("Process 100% complete")
+print("Starting analytics")
+
 
 analytics = CandidateAnalytics()
 
@@ -98,6 +115,7 @@ Declined_offers = analytics.candidates_declined_offer()
 business012019 = analytics.applications_by_program_and_month("Business", 2019, 1)
 Data012019 = analytics.applications_by_program_and_month("Data", 2019, 1)
 Eng02019 = analytics.applications_by_program_and_month("Engineering", 2019, 1)
+
 
 business022019 = analytics.applications_by_program_and_month("Business", 2019, 2)
 Data022019 = analytics.applications_by_program_and_month("Data", 2019, 2)
@@ -140,6 +158,70 @@ percentage_passed = analytics.percentage_passed() ## could just be a count of al
 pass_rates_by_program = analytics.pass_rates_by_program()
 
 top_inviters_for_passed_candidates = analytics.top_inviters_for_passed_candidates()
+
+#print all the analytics
+print("Declined offers: ", Declined_offers)
+print("***********************************")
+print("individual program applications by month:")
+print("january 2019")
+print("===================================")
+print("Business 01/2019: ", business012019)
+print("Data 01/2019: ", Data012019)
+print("Engineering 01/2019: ", Eng02019)
+print(" ")
+print("February 2019")
+print("===================================")
+print("Business 02/2019: ", business022019)
+print("Data 02/2019: ", Data022019)
+print("Engineering 02/2019: ", Eng002019)
+print(" ")
+print("March 2019")
+print("===================================")
+print("Business 03/2019: ", business032019)
+print("Data 03/2019: ", Data032019)
+print("Engineering 03/2019: ", Eng032019)
+print(" ")
+print("April 2019")
+print("===================================")
+print("Business 04/2019: ", business042019)
+print("Data 04/2019: ", Data042019)
+print("Engineering 04/2019: ", Eng042019)
+print(" ")
+print("May 2019")
+print("===================================")
+print("Business 05/2019: ", business052019)
+print("Data 05/2019: ", Data052019)
+print("Engineering 05/2019: ", Eng052019)
+print(" ")
+print("June 2019")
+print("===================================")
+print("Business 06/2019: ", business062019)
+print("Data 06/2019: ", Data062019)
+print("Engineering 06/2019: ", Eng062019)
+print(" ")
+print("July 2019")
+print("===================================")
+print("Business 07/2019: ", business072019)
+print("Data 07/2019: ", Data072019)
+print("Engineering 07/2019: ", Eng072019)
+print(" ")
+print("Aug 2019")
+print("===================================")
+print("Business 08/2019: ", business082019)
+print("Data 08/2019: ", Data082019)
+print("Engineering 08/2019: ", Eng082019)
+print("===================================")
+
+
+
+
+print("Overall Academy Attendies: ", Overall_Academy_attendies)
+print("Overall Academy Passes: ", overall_Academy_passes)
+print("Total Academy Failures: ", total_academy_failures)
+print("Percentage Passed: ", percentage_passed)
+print("Pass Rates by Program: ", pass_rates_by_program)
+print("Top Inviters for Passed Candidates: ", top_inviters_for_passed_candidates)
+
 print("done with analytics")
 
 
