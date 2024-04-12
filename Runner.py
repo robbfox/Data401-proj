@@ -51,23 +51,19 @@ print("uploading raw files to mongo complete")
 print("Process 30% complete")
 
 collection = db['Candidates']
-# documents = list(collection.find())
-# list_of_objects_processed =[]
-# for doc in documents:
-#
-#     file_name = f"Candidates/{doc['name'].replace(' ', '_')}.json"
-#     list_of_objects_processed.append(file_name)
 
 
 regex_pattern = re.compile(r".json$")
 json_docs = db.Talent.find({"File origin": {"$regex": regex_pattern}},
                            {"name": 1, "date": 1, "_id": 0})
 
+
 for json_doc in json_docs:
     input_name = json_doc['name']
     input_date = json_doc['date']
     inserter.get_id_talent(input_name, input_date)
     print(f"Inserted candidate for {input_name}")
+
 
 
 
@@ -85,18 +81,17 @@ print("Objects created successfully and inserted into Candidates collection")
 print("Process 70% complete")
 print("uploading objects to s3")
 
-# Get all documents from the collection
 documents = list(collection.find())
 
-# Loop through the documents and upload each to S3
+## Loop through the documents and upload each to S3
 for doc in documents:
     # Convert the document to a JSON string
     doc_json = dumps(doc)
 
-    # Use the '_id' field as the name for the JSON file
+    ## Use the '_id' field as the name for the JSON file
     file_name = file_name = f"Candidates/{doc['name'].replace(' ', '_')}_{doc['_id']}.json"
 
-    # Upload to S3
+    ## Upload to S3
     s3.s3.put_object(Body=doc_json, Bucket=bucket_name, Key=file_name)
     print(f"Uploaded {file_name} to S3 bucket {bucket_name}")
 
