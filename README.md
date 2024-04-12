@@ -27,4 +27,4 @@ The S3 manager script manages interactions with AWS S3, including reading files 
 
 
 License
-This project is licensed under the MIT Licens
+This project is licensed under the MIT License
