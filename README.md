@@ -39,11 +39,11 @@ The team created accounts on MongoDB Atlas, one of the team created a Database c
  
 ## Collections
 This database would be receiving data from the Talent and Academy categories. Talent refers to all of the data including personal information, competencies, and test scores etc on a person that is being considered to join Sparta up until they join if they pass and accept the offer. Academy data includes the weekly scores of each Sparta trainee out of 5 tested competencies. Therefore, in the database there are two Collections named “Talent” and “Academy” that will receive this data. A third collection named “Candidates” exists that pulls in the respective data from Talent and Academy for each unique person to create a one-person view comprising all of their information.
+![image](https://github.com/robbfox/Data401-proj/assets/65783110/d569666d-784f-4e9e-b7b8-4968bf5b72dc)
 
 ## Uploading the data into MongoDB
 File: data_upload_to_mongo
 Running the above file takes in the input (cleaned data) and inserts them into either the Talent or Academy Collection in the MongoDB database buy identifying the ending of the file e.g. .JSON.
-![image](https://github.com/robbfox/Data401-proj/assets/65783110/d569666d-784f-4e9e-b7b8-4968bf5b72dc)
 
 ## Linking together separate documents
 This markdown describes how we identified overlapping data in each document from the Talent and Academy bucket to create reference points to build our one-person view (in the Candidate collection). The Applicant name and test date are the main linking attributes we have used.
